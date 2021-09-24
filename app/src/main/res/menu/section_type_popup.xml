@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/image_info_section_type"
+        android:title="@string/image_info" />
+    <item
+        android:id="@+id/fourier_transform_section_type"
+        android:title="@string/fourier_transform"/>
+</menu>
