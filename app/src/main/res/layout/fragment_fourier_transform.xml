@@ -40,7 +40,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-            android:id="@+id/subsamplingScaleImageView"
+            android:id="@+id/bitPlane1"
             android:visibility="invisible"
             android:layout_width="300dp"
             android:layout_height="300dp"

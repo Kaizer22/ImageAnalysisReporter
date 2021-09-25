@@ -19,7 +19,7 @@ import ru.desh.imageanalysisreporter.R
 import ru.desh.imageanalysisreporter.network.NetworkUtils
 
 class FourierTransformResultFragment(private val filename: String): Fragment() {
-    private val logTag = "Get Image Info"
+    private val logTag = "Get Fourier"
 
     private lateinit var fourierImagePreview: SubsamplingScaleImageView
     private lateinit var progressBar: ProgressBar
@@ -33,7 +33,7 @@ class FourierTransformResultFragment(private val filename: String): Fragment() {
         val view = inflater.inflate(R.layout.fragment_fourier_transform, container, false)
         initElements(view)
         if (!::fourierImage.isInitialized) {
-            getGetFourierImage()
+            getFourierImage()
         } else {
             renderImage()
         }
@@ -41,7 +41,7 @@ class FourierTransformResultFragment(private val filename: String): Fragment() {
     }
 
     private fun initElements(view: View) {
-        fourierImagePreview = view.findViewById(R.id.subsamplingScaleImageView)
+        fourierImagePreview = view.findViewById(R.id.bitPlane1)
         progressBar = view.findViewById(R.id.imageInfoLoadingBar)
     }
 
@@ -50,7 +50,7 @@ class FourierTransformResultFragment(private val filename: String): Fragment() {
         progressBar.visibility = View.GONE
     }
 
-    private fun getGetFourierImage() {
+    private fun getFourierImage() {
         val retrofitService = NetworkUtils.getRetrofitService()
         retrofitService.GetFourierTransform(filename).enqueue(
             object : Callback<ResponseBody> {

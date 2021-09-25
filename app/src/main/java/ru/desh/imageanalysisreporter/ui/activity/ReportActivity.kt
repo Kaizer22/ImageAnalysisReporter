@@ -14,9 +14,9 @@ import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import ru.desh.imageanalysisreporter.model.ImagePalette
 import ru.desh.imageanalysisreporter.model.Report
-import ru.desh.imageanalysisreporter.ui.fragment.FourierTransformResultFragment
-import ru.desh.imageanalysisreporter.ui.fragment.ImageInfoResultFragment
+import ru.desh.imageanalysisreporter.ui.fragment.*
 
 
 class ReportActivity : AppCompatActivity() {
@@ -45,6 +45,7 @@ class ReportActivity : AppCompatActivity() {
             linearLayout.addView(fm)
             fm.id = ++position
             Log.i("REPORT_SETTINGS", settingKey.toString())
+            //TODO replace with Recycler View
             when(settingKey) {
                 ReportSettingsActivity.SettingsType.IMAGE_INFO_SETTINGS -> {
                     val fragment = ImageInfoResultFragment(reportSettings.externalFileName)
@@ -60,6 +61,32 @@ class ReportActivity : AppCompatActivity() {
                     replace(position, (fragment as Fragment), settingKey.toString()).
                     commit()
                 }
+                ReportSettingsActivity.SettingsType.IMAGE_HISTOGRAM_SETTINGS -> {
+                    val fragment = ImageHistogramResultFragment(reportSettings.externalFileName)
+                    supportFragmentManager.
+                    beginTransaction().
+                    replace(position, (fragment as Fragment), settingKey.toString()).
+                    commit()
+                }
+                ReportSettingsActivity.SettingsType.COLOR_PALETTE_SETTINGS -> {
+                    val colorsNumber = reportSettings
+                        .settings[ReportSettingsActivity.SettingsType.COLOR_PALETTE_SETTINGS]!![ReportSettingsActivity.COLORS_NUMBER_PARAM_KEY]
+                        ?.toInt()
+                    val fragment = ColorPaletteResultFragment(reportSettings.externalFileName, colorsNumber)
+                    supportFragmentManager.
+                    beginTransaction().
+                    replace(position, (fragment as Fragment), settingKey.toString()).
+                    commit()
+                }
+                ReportSettingsActivity.SettingsType.BIT_PLANES -> {
+                    val fragment = BitPlanesResultFragment(reportSettings.externalFileName)
+                    supportFragmentManager.
+                    beginTransaction().
+                    replace(position, (fragment as Fragment), settingKey.toString()).
+                    commit()
+                }
+                ReportSettingsActivity.SettingsType.EDGE_DETECTION_SETTINGS -> TODO()
+                ReportSettingsActivity.SettingsType.IMAGE_SEGMENTATION_SETTINGS -> TODO()
             }
         }
     }

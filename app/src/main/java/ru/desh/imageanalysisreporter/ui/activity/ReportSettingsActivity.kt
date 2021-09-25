@@ -7,16 +7,13 @@ import android.os.Bundle
 
 import android.util.Log
 import android.view.View
-import android.widget.ImageButton
-import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.button.MaterialButton
 import pub.devrel.easypermissions.EasyPermissions
 import ru.desh.imageanalysisreporter.R
 import ru.desh.imageanalysisreporter.ui.service.SettingsProvider
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.*
@@ -32,18 +29,26 @@ import ru.desh.imageanalysisreporter.utils.file.FileUtils
 
 
 class ReportSettingsActivity : AppCompatActivity() {
+    companion object {
+        val COLORS_NUMBER_PARAM_KEY = "COLORS_NUMBER"
+    }
     enum class SettingsType {
         IMAGE_INFO_SETTINGS, COLOR_PALETTE_SETTINGS,
-        FOURIER_TRANSFORM_SETTINGS, EDGE_DETECTION_SETTINGS,
-        IMAGE_HISTOGRAM_SETTINGS, IMAGE_SEGMENTATION_SETTINGS
+        FOURIER_TRANSFORM_SETTINGS,
+        IMAGE_HISTOGRAM_SETTINGS, BIT_PLANES,
+
+        //TODO
+        EDGE_DETECTION_SETTINGS,
+        IMAGE_SEGMENTATION_SETTINGS,
     }
+    private var currentSectionPosition = 0
     private lateinit var currentReport: Report
+    private var settingsViews = mutableMapOf<SettingsType, View>()
 
     private val galleryPermissions = arrayOf(
         android.Manifest.permission.READ_EXTERNAL_STORAGE,
         android.Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
-    private val settingsProvider = SettingsProvider()
 
     private lateinit var generateReport: MaterialButton
     private lateinit var uploadImage: MaterialButton
@@ -51,7 +56,6 @@ class ReportSettingsActivity : AppCompatActivity() {
     private lateinit var reportSettingsHint: TextView
     private lateinit var reportSettingsContainer: LinearLayout
 
-    private lateinit var uploadedImage: File
 
     private val onUploadImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri ->
         uri.let {
@@ -64,9 +68,7 @@ class ReportSettingsActivity : AppCompatActivity() {
                     MediaType.parse(contentResolver.getType(uri)),
                     sourceImage
                 )
-                // MultipartBody.Part is used to send also the actual file name
                 val body = MultipartBody.Part.createFormData("file", sourceImage.name, requestFile)
-                // finally, execute the request
                 NetworkUtils.getRetrofitService().UploadImage(body).enqueue(object : Callback<UploadImageResponse>{
                     override fun onResponse(
                         call: Call<UploadImageResponse>,
@@ -76,6 +78,8 @@ class ReportSettingsActivity : AppCompatActivity() {
                         val b = response.body()
                         if (b != null) {
                             Log.i("IMAGE_UPLOAD_RESULT", "Got external file name: " + b.externalFileName)
+                            generateReport.visibility = View.VISIBLE
+                            reportSettingsHint.text = resources.getString(R.string.report_settings_hint_2)
                             currentReport.externalFileName = b.externalFileName
                         }
                     }
@@ -113,8 +117,6 @@ class ReportSettingsActivity : AppCompatActivity() {
             if (EasyPermissions.hasPermissions(this, *galleryPermissions)) {
                 onUploadImage.launch("image/*")
                 uploadImage.visibility = View.INVISIBLE
-                generateReport.visibility = View.VISIBLE
-                reportSettingsHint.text = resources.getString(R.string.report_settings_hint_2)
             } else {
                 EasyPermissions.requestPermissions(this, "Access for storage", 101, *galleryPermissions)
             }
@@ -126,6 +128,9 @@ class ReportSettingsActivity : AppCompatActivity() {
                 when (it.itemId) {
                     R.id.image_info_section_type -> addSection(SettingsType.IMAGE_INFO_SETTINGS, R.layout.image_info_settings_view)
                     R.id.fourier_transform_section_type -> addSection(SettingsType.FOURIER_TRANSFORM_SETTINGS, R.layout.fourier_transform_settings_view)
+                    R.id.rgb_hist_section_type -> addSection(SettingsType.IMAGE_HISTOGRAM_SETTINGS, R.layout.rgb_histogram_settings_view)
+                    R.id.color_palette_section_type -> addSection(SettingsType.COLOR_PALETTE_SETTINGS, R.layout.colors_palette_settings_view)
+                    R.id.bit_planes_section_type -> addSection(SettingsType.BIT_PLANES, R.layout.bit_planes_settings_view)
                     else -> false
                 }
             }
@@ -133,10 +138,27 @@ class ReportSettingsActivity : AppCompatActivity() {
         }
         generateReport.setOnClickListener {
             val intent = Intent(this, ReportActivity::class.java)
+
+            putSettingsParams()
             val jsonString = Json.encodeToString(currentReport)
             intent.putExtra("REPORT_SETTINGS", jsonString)
-
             startActivity(intent)
+        }
+    }
+
+    private fun putSettingsParams() {
+        for (section in settingsViews.keys) {
+            when (section) {
+                SettingsType.COLOR_PALETTE_SETTINGS -> {
+                    val colorsNumber = settingsViews[section]!!.findViewById<EditText>(R.id.editTextColorsNumber)
+                    val num = colorsNumber.text.toString()
+                    Log.i("PUT_SETTING_PARAMS", num)
+                    currentReport.settings[section]!![COLORS_NUMBER_PARAM_KEY] = num
+                    Log.i("AFTER_PUT_SETTINGS",
+                        currentReport.settings[section]!![COLORS_NUMBER_PARAM_KEY].toString()
+                    )
+                }
+            }
         }
     }
 
@@ -148,12 +170,14 @@ class ReportSettingsActivity : AppCompatActivity() {
         } else {
             val settingsSection = layoutInflater.inflate(sectionViewId, null)
 
-            reportSettingsContainer.addView(settingsSection,0,
+            reportSettingsContainer.addView(settingsSection,currentSectionPosition,
                 ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 ))
+            currentSectionPosition++
             currentReport.settings.putIfAbsent(sectionType, mutableMapOf())
+            settingsViews[sectionType] = settingsSection
             Log.i("ADD_VIEW", "View added")
             Log.i("CHILD_COUNT",
                 (reportSettingsContainer as ViewGroup).childCount.toString()

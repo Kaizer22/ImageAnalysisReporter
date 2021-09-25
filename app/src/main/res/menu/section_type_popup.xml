@@ -6,4 +6,13 @@
     <item
         android:id="@+id/fourier_transform_section_type"
         android:title="@string/fourier_transform"/>
+    <item
+        android:id="@+id/rgb_hist_section_type"
+        android:title="@string/rgb_histograms"/>
+    <item
+        android:id="@+id/color_palette_section_type"
+        android:title="@string/colors_palette"/>
+    <item
+        android:id="@+id/bit_planes_section_type"
+        android:title="@string/bit_planes"/>
 </menu>

@@ -2,7 +2,6 @@ package ru.desh.imageanalysisreporter.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Patterns
 import android.widget.EditText
 import android.widget.Toast
@@ -25,7 +24,7 @@ class AppSettingsActivity: AppCompatActivity() {
 
     private fun initElements() {
         languageField = findViewById(R.id.languageButton)
-        backendURLInput = findViewById(R.id.editTextBackendURL)
+        backendURLInput = findViewById(R.id.editTextColorsNumber)
 
         backendURLInput.setText(NetworkUtils.baseUrl)
 

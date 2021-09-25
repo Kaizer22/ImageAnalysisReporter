@@ -27,4 +27,27 @@
     <string name="report">Report</string>
     <string name="download_as_pdf">Download as PDF</string>
     <string name="image_analysis_report">Image analysis report</string>
+    <string name="red_channel">Red channel</string>
+    <string name="green_channel">Green channel</string>
+    <string name="rgb_histogram">RGB histogram</string>
+    <string name="blue_channel">Blue channel</string>
+    <string name="rgb_histograms">RGB histograms</string>
+    <string name="rgb_hist_description">Color intensity distribution</string>
+    <string name="colors_palette">Colors palette</string>
+    <string name="bit_planes">Bit planes</string>
+    <string name="color_palette">Color palette</string>
+    <string name="colors_palette_description">Determination of the palette of prevailing tones using the k-means method</string>
+    <string name="number">Number</string>
+    <string name="_000_000_000">(000, 000, 000)</string>
+    <string name="_000000">#000000</string>
+    <string name="bit_planes_description">Eight black-white images of bit planes of the source image. Source image will be converted to a 8 bits black-white representation</string>
+    <string name="bit_plane_00000001">Bit plane 00000001</string>
+    <string name="bit_plane_00000010">Bit plane 00000010</string>
+    <string name="bit_plane_00000100">Bit plane 00000100</string>
+    <string name="bit_plane_00001000">Bit plane 00001000</string>
+    <string name="bit_plane_00010000">Bit plane 00010000</string>
+    <string name="bit_plane_00100000">Bit plane 00100000</string>
+    <string name="bit_plane_01000000">Bit plane 01000000</string>
+    <string name="bit_plane_10000000">Bit plane 10000000</string>
+    <string name="max_value">Max value:</string>
 </resources>

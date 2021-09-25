@@ -1,6 +1,7 @@
 package ru.desh.imageanalysisreporter.network
 
 import okhttp3.MultipartBody
+import okhttp3.Response
 import retrofit2.Call
 import okhttp3.ResponseBody
 import retrofit2.http.*
@@ -19,11 +20,12 @@ interface RetrofitService {
     fun GetImageInfo(
         @Query("filename") filename: String
     ): Call<ImageInfo>
-    @GET("/get-bit-planes")
+    @GET("/get-image-bit-planes")
+    @Headers("Content-Type:application/octet-stream")
     fun GetBitPlanes(
         @Query("filename") filename: String
-    ): Call<MultipartBody>
-    @GET("/get-color-palette")
+    ): Call<ResponseBody>
+    @GET("/get-image-palette")
     fun GetColorPalette(
         @Query("filename") filename: String,
         @Query("colors_count") colorsNumber: Int
